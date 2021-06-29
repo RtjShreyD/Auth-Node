@@ -1,0 +1,26 @@
+{
+  "name": "auth",
+  "version": "1.0.0",
+  "description": "handling token based authentication using nodejs, express, mongo, jwt",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/RtjShreyD/Auth-Node.git"
+  },
+  "keywords": [
+    "nodejs",
+    "expressjs",
+    "authentication",
+    "jwt",
+    "mongo"
+  ],
+  "author": "Rtj",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RtjShreyD/Auth-Node/issues"
+  },
+  "homepage": "https://github.com/RtjShreyD/Auth-Node#readme"
+}
