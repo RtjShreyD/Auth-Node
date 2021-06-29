@@ -12,6 +12,9 @@ mongoose.connect(process.env.DB_CONNECT, {useNewUrlParser: true, useUnifiedTopol
 // import routes
 const authRoutes = require("./routes/auth");
 
+// middlewares
+app.use(express.json()); // for body parser
+
 // route middlewares
 app.use("/api/user", authRoutes);
 
