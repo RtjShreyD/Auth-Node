@@ -16,3 +16,10 @@
 
 -- restrict access to the dashboard page till the email account is verified.
 -- On Signup success, redirect to OTP page for verification, Shoot email with OTP, On OTP match, redirect to Dashboard page.
+
+** Using AWS SES for sending emails has a bit of complications --->
+
+i. Sender email ID and receiver email id should be both verified at development stage.
+ii. In production environment, the AWS account should be moved out of AWS Sandbox https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html
+
+this is done to prevent email spamming. Once out of Sandbox we can send emails to unverified addresses with a verified email address.

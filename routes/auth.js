@@ -85,7 +85,7 @@ router.post("/register", async (req, res) => {
                 /* required */
                 Html: {
                   Charset: "UTF-8",
-                  Data: "HTML_FORMAT_BODY",
+                  Data: otpStr,
                 },
                 Text: {
                   Charset: "UTF-8",
