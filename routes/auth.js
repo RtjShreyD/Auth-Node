@@ -8,7 +8,7 @@ var credentials = new AWS.SharedIniFileCredentials({profile: 'default'});
 AWS.config.credentials = credentials;
 
 // validation
-const { registerValidation, loginValidation } = require("../validation");
+const { registerValidation, loginValidation, otpValidation } = require("../validation");
 
 // encryption lib
 const bcrypt = require("bcrypt");
@@ -133,6 +133,42 @@ router.post("/register", async (req, res) => {
 });
 
 
+router.post('/verify-otp', async (req, res) => {
+    console.log(req.body)
+
+    const { error } = otpValidation(req.body);
+    // throw validation errors
+    if (error) return res.status(400).json({ error: error.details[0].message });
+
+    const user = await User.findOne({ email: req.body.email });
+
+     // throw error when email is wrong
+     if (!user) return res.status(400).json({ error: "Email is wrong" });
+     console.log(user);
+     // check for otp and verify status true
+
+     if(user.verified) return res.status(201).json({ message: "Already verified user"});
+
+     const validotp = await bcrypt.compare(req.body.oneTimePassword, user.temp)
+
+     if(!validotp) return res.status(400).json({ error: "OTP does not match"});
+
+    user.verified = true;
+    user.temp = "";
+    
+    try {
+        const savedUser = await user.save();
+        return res.status(201).json({ success: "Email verified successfully", data:{name: savedUser.name, email: savedUser.email}});
+    }
+    catch (error) {
+        res.status(400).json({ error });
+    }    
+
+});
+
+
+
+
 // login route
 router.post("/login", async (req, res) => {
 
@@ -153,7 +189,7 @@ router.post("/login", async (req, res) => {
     if (!validPassword)
         return res.status(400).json({ error: "Password is wrong" });
 
-    if (validPassword && !User.verified)
+    if (validPassword && !user.verified)
     {
         return res.status(400).json({ Message: "Please verify the email ID"});
     }
