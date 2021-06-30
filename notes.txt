@@ -1,0 +1,18 @@
+1. What are we going to do ?
+
+-- Make a controllerjs file
+-- Implement 3rd party Email verification with the current user auth system.
+-- Implement password reset with the current user
+-- Implement swagger for api
+-- Implement staff roles and restricted page access to certain roles (discuss)
+-- Implement Google, GitHub authentication if possible.
+
+2. What have we done ?
+
+-- Implemented token based authentication on email.
+-- Email is however not being verified for now.
+
+3. How to do this ?
+
+-- restrict access to the dashboard page till the email account is verified.
+-- On Signup success, redirect to OTP page for verification, Shoot email with OTP, On OTP match, redirect to Dashboard page.

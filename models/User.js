@@ -23,6 +23,16 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  verified: {
+      type: Boolean,
+      default: false
+  },
+  temp: {
+      type: String,
+      required: false,
+      min: 5,
+      max: 6,
+  }
 });
 
 module.exports = mongoose.model("User", userSchema);
