@@ -11,6 +11,7 @@ mongoose.connect(process.env.DB_CONNECT, {useNewUrlParser: true, useUnifiedTopol
 
 // import routes
 const authRoutes = require("./routes/auth");
+const editRoutes = require("./routes/edit")
 const dashboardRoutes = require("./routes/dashboard");
 const verifyToken = require("./routes/validate-token");
 
@@ -21,6 +22,7 @@ app.use(express.json()); // for body parser
 app.use("/api/user", authRoutes);
 
 // this route is protected with token
+app.use("/api/", verifyToken, editRoutes);
 app.use("/api/dashboard", verifyToken, dashboardRoutes);
 
 app.listen(3000, () => console.log("server is running..."));

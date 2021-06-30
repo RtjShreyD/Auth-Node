@@ -9,7 +9,7 @@ var credentials = new AWS.SharedIniFileCredentials({profile: 'default'});
 AWS.config.credentials = credentials;
 
 // validation
-const { registerValidation, loginValidation, otpValidation } = require("../validation");
+const { registerValidation, loginValidation, otpValidation, passwordEmailValidation } = require("../validation");
 
 // encryption lib
 const bcrypt = require("bcrypt");
@@ -196,5 +196,34 @@ const loginPerson = async (req, res) => {
     });
 }
 
+const passwordReset = async (req, res) => {
+    const { error } = passwordEmailValidation(req.body);
 
-module.exports = { createPerson, verifyPerson, loginPerson };
+    if (error) return res.status(400).json({ error: error.details[0].message });
+
+    const user = await User.findOne({ email: req.body.email });
+
+    // throw error when email is wrong
+    if (!user) return res.status(400).json({ error: "Email is wrong" });
+
+    if(!req.body.password === req.body.confirmPassword)
+        return res.status(400).json({ error: "Password and confirmPassword do not match"});
+    
+    const salt = await bcrypt.genSalt(10);
+    const newpassword = await bcrypt.hash(req.body.password, salt);
+
+    user.password = newpassword;
+
+
+    try {
+        const savedUser = await user.save();
+        return res.status(201).json({ success:"Password reset successfully", data: {id: savedUser._id, name: savedUser.name, email: savedUser.email }})
+    }
+    catch(error){
+        return res.status(400).json({ error });   
+    }
+
+}
+
+
+module.exports = { createPerson, verifyPerson, loginPerson, passwordReset };
