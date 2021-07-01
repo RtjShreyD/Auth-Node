@@ -1,12 +1,17 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
-const AWS = require("aws-sdk");
+
+const nodemailer = require("nodemailer");
 
 const utility = require("./utility");
 
-AWS.config.update({ region: 'ap-south-1' });
-var credentials = new AWS.SharedIniFileCredentials({profile: 'default'}); 
-AWS.config.credentials = credentials;
+var mail = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'shreyanshece1041@gmail.com',
+        pass: 'lwlymzpjnxfnflul'
+    }
+})
 
 // validation
 const { registerValidation, loginValidation, otpValidation, passwordEmailValidation } = require("../validation");
@@ -55,53 +60,22 @@ const createPerson = async (req, res) => {
         const savedUser = await user.save();
         // Send the OTP in email
 
-        // Create sendEmail params 
-        params = {
-            Destination: {
-              /* required */
-              CcAddresses: [
-                /* more items */
-              ],
-              ToAddresses: [
-                savedUser.email, //RECEIVER_ADDRESS
-                /* more To-email addresses */
-              ],
-            },
-            Message: {
-              /* required */
-              Body: {
-                /* required */
-                Html: {
-                  Charset: "UTF-8",
-                  Data: otpStr,
-                },
-                Text: {
-                  Charset: "UTF-8",
-                  Data: "TEXT_FORMAT_BODY",
-                },
-              },
-              Subject: {
-                Charset: "UTF-8",
-                Data: "EMAIL_SUBJECT",
-              },
-            },
-            Source: "shreyanshece1041@gmail.com", // SENDER_ADDRESS
-            ReplyToAddresses: [
-              /* more items */
-            ],
+        var mailOptions = {
+            from: 'shreyanshece1041@gmail.com',
+            to: savedUser.email,
+            subject: 'OTP for verification',
+            text: otpStr
           };
-        
-        // Create the promise and SES service object
-        var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
-        
-        // Handle promise's fulfilled/rejected states
-        sendPromise.then(
-            function(data) {
-            console.log(data.MessageId);
-            }).catch(
-            function(err) {
-            console.error(err, err.stack);
-            });
+
+          console.log(mailOptions);
+          
+          mail.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent: ' + info.response);
+            }
+          });
 
         //send response
         res.json({ 
